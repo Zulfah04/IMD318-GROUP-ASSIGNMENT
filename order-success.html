@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Successful ! - Meow Meow</title>
+    <link rel="stylesheet" href="cart.css">
+    <link rel="stylesheet" href="styler.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        .success-animation {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background-color: #47c9a2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-checkmark i {
+            color: white;
+            font-size: 40px;
+        }
+
+        .order-success {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-details {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .continue-shopping {
+            margin-top: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <div class="success-animation">
+                <div class="success-checkmark">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h2>Order Placed Successfully!</h2>
+                <p>Thank you for your purchase.</p>
+            </div>
+
+            <div class="order-success">
+                <div class="order-info">
+                    <h4>Order Information</h4>
+                    <p>Order ID: <span id="display-order-id"></span></p>
+                    <p>Order Date: <span id="display-order-date"></span></p>
+                    <p>Shipping To: <span id="display-shipping"></span></p>
+                </div>
+
+                <div class="order-details">
+                    <h4>Order Summary</h4>
+                    <div id="order-items"></div>
+                    <div class="order-totals mt-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Subtotal:</span>
+                            <span id="display-subtotal"></span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Shipping:</span>
+                            <span id="display-shipping-cost"></span>
+                        </div>
+                        <div class="d-flex justify-content-between" id="discount-row"
+                            style="display: none !important;">
+                            <span class="text-success">Discount (10%):</span>
+                            <span class="text-success" id="display-discount"></span>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <strong>Total:</strong>
+                            <strong id="display-total"></strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="continue-shopping">
+                    <a href="cart.html" class="btn btn-primary">Continue Shopping</a>
+                    <a href="#" class="btn btn-outline-primary" onclick="window.print()">Print Receipt</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const orderData = JSON.parse(localStorage.getItem('lastOrder'));
+        if (!orderData) {
+            window.location.href = 'index.html';
+            return;
+        }
+
+        document.getElementById('display-order-id').textContent = orderData.orderId;
+        document.getElementById('display-order-date').textContent = new Date(orderData.orderDate).toLocaleString();
+
+        const shipping = orderData.shippingDetails;
+        document.getElementById('display-shipping').textContent =
+            `${shipping.firstName} ${shipping.lastName}, ${shipping.address1}, ${shipping.city}, ${shipping.state}, ${shipping.zipCode}`;
+
+        const productsContainer = document.getElementById('order-items');
+        orderData.items.forEach(item => {
+            const productDiv = document.createElement('div');
+            productDiv.className = 'order-item';
+            productDiv.innerHTML = `
+                <span>${item.name} x ${item.quantity}</span>
+                <span>RM${(item.price * item.quantity).toFixed(2)}</span>
+            `;
+            productsContainer.appendChild(productDiv);
+        });
+
+        document.getElementById('display-subtotal').textContent = `RM${orderData.totals.subtotal.toFixed(2)}`;
+        document.getElementById('display-shipping-cost').textContent = `RM${orderData.totals.shipping.toFixed(2)}`;
+
+        if (orderData.totals.discountApplied) {
+            document.getElementById('discount-row').style.cssText = 'display: flex !important';
+            document.getElementById('display-discount').textContent = `-RM${orderData.totals.discount.toFixed(2)}`;
+        }
+
+        document.getElementById('display-total').textContent = `RM${orderData.totals.total.toFixed(2)}`;
+
+        localStorage.removeItem('lastOrder');
+    });
+	</script>
+</body>
+</html>

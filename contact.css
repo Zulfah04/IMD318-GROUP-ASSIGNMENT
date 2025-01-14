@@ -1,0 +1,130 @@
+#contact {
+    margin: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-image: url('img/p4.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    margin-top: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 50px;
+    gap: 20px;
+}
+
+.contact-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 80%;
+    max-width: 1200px;
+    gap: 20px;
+}
+
+.container {
+    width: 60%;
+    background-color: #e6ca9e;
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+    .container h1 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+
+    .container p {
+        font-size: 1.2rem;
+        color: black;
+    }
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 95%;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
+    }
+
+    .form-group textarea {
+        resize: none;
+    }
+
+button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+    button:hover {
+        background-color: #555;
+    }
+
+.container .social-media {
+    margin-top: 20px;
+    text-align: center;
+}
+
+    .container .social-media h2 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: black;
+    }
+
+    .container .social-media .social-icon {
+        margin: 0 10px;
+        font-size: 2rem;
+        color: #333;
+        text-decoration: none;
+        transition: color 0.3s, transform 0.3s;
+    }
+
+        .container .social-media .social-icon:hover {
+            color: #555;
+            transform: scale(1.2);
+        }
+
+.map-container {
+    width: 80%; /* Takes 80% of the parent container's width */
+    height: 200px; /* Fixed height for the map */
+    margin: 20px auto; /* Adds space above and centers the map horizontally */
+    background-color: #fff;
+    border: 5px solid #d39355; /* Adds a border around the map container */
+    border-radius: 8px; /* Rounded corners for the container */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex; /* Enables alignment */
+    justify-content: center; /* Centers content horizontally */
+    align-items: center; /* Centers content vertically */
+}
+
+    .map-container iframe {
+        width: 100%; /* Fills the full width of the container */
+        height: 100%; /* Fills the full height of the container */
+        border: 2px solid #ccc; /* Adds a border directly around the map */
+        border-radius: 6px; /* Slightly smaller rounded corners for the map itself */
+    }
+
+
+

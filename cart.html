@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="cart.css">
+    <link rel="stylesheet" href="styler.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="brand-name">Meow Meow</div>
+        <div class="nav-icons">
+            <a href="index.html">HOME</a>
+            <a href="index.html">ABOUT US</a>
+            <div class="dropdown">
+                <a href="index.html">PRODUCT</a>
+                <div class="dropdown-content">
+                    <a href="clothes.html">CLOTHES</a>
+                    <a href="accessories.html">ACCESSORIES</a>
+                    <a href="shoes.html">SHOES</a>
+                    <a href="bags.html">BAGS</a>
+                </div>
+            </div>
+            <a href="index.html">CONTACT</a>
+            <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
+            <a href="search.html"><i class="fas fa-search"></i></a>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-lg-8 table-responsive mb-5"><br><br>
+                <table class="table table-light table-borderless table-hover text-center mb-0">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Products</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody class="align-middle">
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-lg-4"><br><br>
+                <form class="mb-30" action="" id="voucherForm">
+                    <div class="input-group">
+                        <input type="text" class="form-control border-0 p-4" placeholder="Coupon Code">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary">Apply Coupon</button>
+                        </div>
+                    </div>
+                </form>
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Cart Summary</span></h5>
+                <div class="bg-light p-30 mb-5">
+                    <div class="border-bottom pb-2">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h6>Subtotal</h6>
+                            <h6>RM150</h6>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="font-weight-medium">Shipping</h6>
+                            <h6 class="font-weight-medium">RM10.00</h6>
+                        </div>
+                        <div class="d-flex justify-content-between discount-row" style="display: none !important;">
+                            <h6 class="font-weight-medium text-discount">Discount (10%)</h6>
+                            <h6 class="font-weight-medium text-discount">-RM0</h6>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5>Total</h5>
+                            <h5>RM160</h5>
+                        </div>
+                        <a href="checkout.html" class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function saveCartToStorage() {
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+            updateCartCount();
+        }
+
+        function updateCartCount() {
+            const cartCountElements = document.querySelectorAll('.fa-shopping-cart + .badge');
+            cartCountElements.forEach(element => {
+                element.textContent = cartItems.length;
+            });
+        }
+
+        function generateCartRows() {
+            const tbody = document.querySelector('tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = cartItems.map(item => `
+                <tr>
+                    <td class="align-middle">
+                        <img src="${item.image}" alt="" style="width: 50px;">
+                        ${item.name}
+                    </td>
+                    <td class="align-middle">${item.price}</td>
+                    <td class="align-middle">
+                        <div class="input-group quantity mx-auto" style="width: 100px;">
+                            <div class="input-group-btn">
+                                <button class="btn btn-sm btn-primary btn-minus">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                            <input type="number" class="form-control form-control-sm bg-secondary border-0 text-center" value="${item.quantity}">
+                            <div class="input-group-btn">
+                                <button class="btn btn-sm btn-primary btn-plus">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="align-middle">${(item.price * item.quantity).toFixed(2)}</td>
+                    <td class="align-middle">
+                        <button class="btn btn-sm btn-danger">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            attachEventListeners();
+            updateCartTotals();
+        }
+
+        function attachEventListeners() {
+            function updateQuantity(button, increment) {
+                const row = button.closest('tr');
+                const input = button.closest('.quantity').querySelector('input');
+                const currentValue = parseInt(input.value);
+                const newValue = Math.max(1, currentValue + increment);
+                input.value = newValue;
+
+                const index = Array.from(row.parentElement.children).indexOf(row);
+                cartItems[index].quantity = newValue;
+
+                updateCartTotals();
+                saveCartToStorage();
+            }
+
+            document.querySelectorAll('.btn-minus').forEach(button => {
+                button.addEventListener('click', function () {
+                    updateQuantity(this, -1);
+                });
+            });
+
+            document.querySelectorAll('.btn-plus').forEach(button => {
+                button.addEventListener('click', function () {
+                    updateQuantity(this, 1);
+                });
+            });
+
+            document.querySelectorAll('.btn-danger').forEach(button => {
+                button.addEventListener('click', function () {
+                    const row = this.closest('tr');
+                    const rowIndex = Array.from(row.parentElement.children).indexOf(row);
+                    cartItems.splice(rowIndex, 1);
+                    row.remove();
+                    updateCartTotals();
+                    saveCartToStorage();
+                });
+            });
+        }
+
+        function updateCartTotals() {
+            let subtotal = 0;
+            const shipping = 10;
+
+            document.querySelectorAll('tbody tr').forEach((row, index) => {
+                const price = parseFloat(row.querySelector('td:nth-child(2)').textContent.replace('$', ''));
+                const quantity = parseInt(row.querySelector('.quantity input').value);
+                const total = price * quantity;
+                row.querySelector('td:nth-child(4)').textContent = 'RM' + total.toFixed(2);
+                subtotal += total;
+                cartItems[index].quantity = quantity;
+            });
+
+            const subtotalElements = document.querySelectorAll('.d-flex.justify-content-between.mb-3 h6:last-child');
+            subtotalElements.forEach(element => {
+                element.textContent = 'RM' + subtotal.toFixed(2);
+            });
+
+            const discountApplied = document.getElementById('discountBadge')?.style.display === 'block';
+            const discount = discountApplied ? subtotal * 0.1 : 0;
+
+            const orderTotal = {
+                subtotal: subtotal,
+                shipping: shipping,
+                discount: discount,
+                total: subtotal + shipping - discount,
+                discountApplied: discountApplied
+            };
+            localStorage.setItem('orderTotal', JSON.stringify(orderTotal));
+
+            const discountRow = document.querySelector('.discount-row');
+            if (discountApplied && discountRow) {
+                discountRow.style.cssText = 'display: flex !important';
+                const discountElement = discountRow.querySelector('h6:last-child');
+                if (discountElement) {
+                    discountElement.textContent = '-RM' + discount.toFixed(2);
+                }
+            } else if (discountRow) {
+                discountRow.style.cssText = 'display: none !important';
+            }
+
+            const total = subtotal + shipping - discount;
+            const totalElements = document.querySelectorAll('.d-flex.justify-content-between.mt-2 h5:last-child');
+            totalElements.forEach(element => {
+                element.textContent = 'RM' + total.toFixed(2);
+            });
+
+			const cart = [
+				{ id: 1, name: 'Product 1', price: 20.00, quantity: 2 },
+				{ id: 2, name: 'Product 2', price: 15.00, quantity: 1 }
+			];
+
+			localStorage.setItem('cartItems', JSON.stringify(cart));
+
+			document.getElementById('checkout-button').addEventListener('click', function () {
+			window.location.href = 'checkout.html';
+			});
+        }
+
+        generateCartRows();
+        updateCartTotals();
+    });
+	</script>
+</body>
+</html>
